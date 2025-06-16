@@ -12,6 +12,11 @@ public class playerScript : MonoBehaviour
 	public bool onGround = true;
 	public StatManaging stats;
 
+	bool jumpKeyPressed;
+	bool leftKeyPressed;
+	bool rightKeyPressed;
+	bool downKeyPressed;
+
 	// Start is called before the first frame update
 	void Start()
 	{
@@ -21,28 +26,37 @@ public class playerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		getPlayerInput();
 		if (stats.gameStart)
 		{
-			if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W)) && onGround)
+			if (jumpKeyPressed && onGround)
 			{
 				playerRigidbody.velocity = Vector2.up * jumpStr;
 			}
 
-			if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+			if (leftKeyPressed)
 			{
 				transform.position += Vector3.left * moveSpd * Time.deltaTime;
 			}
 
-			if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+			if (rightKeyPressed)
 			{
 				transform.position += Vector3.right * moveSpd * Time.deltaTime;
 			}
 
-			if ((Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) && !onGround)
+			if (downKeyPressed && !onGround)
 			{
 				transform.position += Vector3.down * moveSpd * Time.deltaTime * downMultiplier;
 			}
 		}
+	}
+
+	public void getPlayerInput() 
+	{
+		jumpKeyPressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W);
+		leftKeyPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+		rightKeyPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+		downKeyPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
 	}
 
 	private void OnTriggerEnter2D()
@@ -57,7 +71,7 @@ public class playerScript : MonoBehaviour
 
 	private void OnTriggerStay2D()
 	{
-		if (stats.gameStart)
+		if (stats.gameStart && !(rightKeyPressed))
 		{
 			float spdMultiplier = stats.score * 0.05f;
 			transform.position += Vector3.left * 2f * Time.deltaTime * (1f + spdMultiplier);
