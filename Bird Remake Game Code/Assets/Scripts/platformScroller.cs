@@ -19,9 +19,12 @@ public class platformScroller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float scoreMultiplier = stats.score * 0.05f;
-        transform.position += Vector3.left * moveSpd * Time.deltaTime * (1 + scoreMultiplier);
-	if (transform.position.x < deadZone || !stats.gameStart)
+        if (stats.gameStart && !stats.gamePaused)
+        {
+            float scoreMultiplier = stats.score * 0.05f;
+            transform.position += Vector3.left * moveSpd * Time.deltaTime * (1 + scoreMultiplier);
+        }
+        if (transform.position.x < deadZone || !stats.gameStart)
         {
             Destroy(gameObject);
         }

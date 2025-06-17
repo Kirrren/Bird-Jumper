@@ -5,13 +5,21 @@ using UnityEngine;
 public class playerScript : MonoBehaviour
 {
 
+	[Header("Movement")]
 	public Rigidbody2D playerRigidbody;
 	public float jumpStr;
 	public float moveSpd;
 	public float downMultiplier = 2;
+
+	[Header("Audio")]
+	public AudioClip landingSound1;
+	public float landingSoundVolume;
+
+	[Header("Logic")]
 	public bool onGround = true;
 	public StatManaging stats;
 
+	// for checking player inputs
 	bool jumpKeyPressed;
 	bool leftKeyPressed;
 	bool rightKeyPressed;
@@ -27,7 +35,7 @@ public class playerScript : MonoBehaviour
 	void Update()
 	{
 		getPlayerInput();
-		if (stats.gameStart)
+		if (stats.gameStart && !stats.gamePaused)
 		{
 			if (jumpKeyPressed && onGround)
 			{
@@ -62,6 +70,7 @@ public class playerScript : MonoBehaviour
 	private void OnTriggerEnter2D()
 	{
 		onGround = true;
+		AudioSource.PlayClipAtPoint(landingSound1, transform.position, landingSoundVolume);
 	}
 
 	private void OnTriggerExit2D()
@@ -71,7 +80,7 @@ public class playerScript : MonoBehaviour
 
 	private void OnTriggerStay2D()
 	{
-		if (stats.gameStart && !(rightKeyPressed))
+		if (stats.gameStart && !stats.gamePaused && !(rightKeyPressed))
 		{
 			float spdMultiplier = stats.score * 0.05f;
 			transform.position += Vector3.left * 2f * Time.deltaTime * (1f + spdMultiplier);

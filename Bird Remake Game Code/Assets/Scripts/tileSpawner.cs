@@ -26,7 +26,7 @@ public class tileSpawner : MonoBehaviour
     void Update()
     {
 		float scoreMultiplier = stats.score * 0.02f;
-		if (stats.gameStart)
+		if (stats.gameStart && !stats.gamePaused)
 		{
 			if (timer >= varSpawnRate)
 			{
