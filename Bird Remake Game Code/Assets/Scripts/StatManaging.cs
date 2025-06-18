@@ -21,6 +21,7 @@ public class StatManaging : MonoBehaviour
 
     [Header("Audio")]
     public AudioClip startButtonAudio;
+    public AudioClip birdDeathAudio;
     public AudioClip endScreenAudio;
     public float volume = 1f;
 
@@ -31,6 +32,7 @@ public class StatManaging : MonoBehaviour
     public tileSpawner platformSpawner;
 
     [Header("Game Logic")]
+    public playerScript playerLogic;
     public bool gameStart = false;
     public bool gamePaused = false;
 
@@ -43,12 +45,17 @@ public class StatManaging : MonoBehaviour
         endScreen.SetActive(false);
         scoreScreen.SetActive(false);
         pauseButton.SetActive(false);
+        pauseScreen.SetActive(false);
         titleScreen.SetActive(true);
         startPosition = character.transform.position;
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            PauseGame();
+        }
         if (gameStart && !gamePaused)
         {
             if (timer > scoreIncRate)
@@ -81,6 +88,7 @@ public class StatManaging : MonoBehaviour
         score = 0;
         platformSpawner.spawnTile(-1.5f);
         platformSpawner.spawnTile(6f);
+        AudioSource.PlayClipAtPoint(startButtonAudio, new Vector3(0f, 0f, 0f), volume);
     }
 
     public void EndGame()
@@ -88,6 +96,7 @@ public class StatManaging : MonoBehaviour
         gameStart = false;
         startBox.SetActive(true);
         character.transform.position = startPosition;
+        AudioSource.PlayClipAtPoint(birdDeathAudio, new Vector3(0f, 0f, 0f), volume);
         scoreScreen.SetActive(false);
         pauseButton.SetActive(false);
         finalScoreText.text = "Score: " + score.ToString();
@@ -96,7 +105,7 @@ public class StatManaging : MonoBehaviour
 
     public void ResetGame()
     {
-        AudioSource.PlayClipAtPoint(endScreenAudio, character.transform.position, volume);
+        AudioSource.PlayClipAtPoint(endScreenAudio, new Vector3(0f, 0f, 0f), volume);
         titleScreen.SetActive(true);
         endScreen.SetActive(false);
     }
@@ -106,6 +115,7 @@ public class StatManaging : MonoBehaviour
         if (!gamePaused)
         {
             gamePaused = true;
+            pauseButton.SetActive(false);
             pauseScreen.SetActive(true);
             playerRB.constraints = RigidbodyConstraints2D.FreezeAll;
         }
@@ -113,9 +123,12 @@ public class StatManaging : MonoBehaviour
         {
             gamePaused = false;
             pauseScreen.SetActive(false);
+            pauseButton.SetActive(true);
             playerRB.constraints = RigidbodyConstraints2D.None;
             playerRB.constraints = RigidbodyConstraints2D.FreezeRotation;
-            character.transform.position += Vector3.down;
+            if (!playerLogic.onGround) {
+                character.transform.position += Vector3.down;
+            }
         }
     }
     

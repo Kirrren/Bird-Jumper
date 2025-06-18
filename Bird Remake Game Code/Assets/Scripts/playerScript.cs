@@ -13,7 +13,8 @@ public class playerScript : MonoBehaviour
 
 	[Header("Audio")]
 	public AudioClip landingSound1;
-	public float landingSoundVolume;
+	public AudioClip jumpSound;
+	[SerializeField] float volume;
 
 	[Header("Logic")]
 	public bool onGround = true;
@@ -39,6 +40,7 @@ public class playerScript : MonoBehaviour
 		{
 			if (jumpKeyPressed && onGround)
 			{
+				AudioSource.PlayClipAtPoint(jumpSound, transform.position, volume);
 				playerRigidbody.velocity = Vector2.up * jumpStr;
 			}
 
@@ -54,7 +56,8 @@ public class playerScript : MonoBehaviour
 
 			if (downKeyPressed && !onGround)
 			{
-				transform.position += Vector3.down * moveSpd * Time.deltaTime * downMultiplier;
+				playerRigidbody.velocity = Vector2.down * downMultiplier;
+				Debug.Log("Bird Going Down");
 			}
 		}
 	}
@@ -64,18 +67,20 @@ public class playerScript : MonoBehaviour
 		jumpKeyPressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W);
 		leftKeyPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
 		rightKeyPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
-		downKeyPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+		downKeyPressed = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow);
 	}
 
 	private void OnTriggerEnter2D()
 	{
 		onGround = true;
-		AudioSource.PlayClipAtPoint(landingSound1, transform.position, landingSoundVolume);
+		AudioSource.PlayClipAtPoint(landingSound1, transform.position, volume);
+		Debug.Log("Bird Hit Ground");
 	}
 
 	private void OnTriggerExit2D()
 	{
 		onGround = false;
+		Debug.Log("Bird Left Ground");
 	}
 
 	private void OnTriggerStay2D()

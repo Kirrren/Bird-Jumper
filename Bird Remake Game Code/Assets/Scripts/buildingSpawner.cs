@@ -7,13 +7,15 @@ public class buildingSpawner : MonoBehaviour
 
 	public GameObject building;
 	public float spawnRate = 10.2f;
-	private float timer = 11f;
+	private float timer = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
-         setBackground(transform.position.x - 2 * spawnRate);
-	 setBackground(transform.position.x - spawnRate);
+      for (int i = 0; i < 4; i++) 
+      {
+         setBackground(transform.position.x - i * spawnRate);
+      }
     }
 
     // Update is called once per frame
