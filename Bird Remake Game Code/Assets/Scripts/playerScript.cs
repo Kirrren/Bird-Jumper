@@ -30,6 +30,7 @@ public class playerScript : MonoBehaviour
 	void Start()
 	{
 		stats = GameObject.FindGameObjectWithTag("StatManager").GetComponent<StatManaging>();
+		onGround = false;
 	}
 
 	// Update is called once per frame
@@ -57,7 +58,6 @@ public class playerScript : MonoBehaviour
 			if (downKeyPressed && !onGround)
 			{
 				playerRigidbody.velocity = Vector2.down * downMultiplier;
-				Debug.Log("Bird Going Down");
 			}
 		}
 	}
@@ -74,13 +74,11 @@ public class playerScript : MonoBehaviour
 	{
 		onGround = true;
 		AudioSource.PlayClipAtPoint(landingSound1, transform.position, volume);
-		Debug.Log("Bird Hit Ground");
 	}
 
 	private void OnTriggerExit2D()
 	{
 		onGround = false;
-		Debug.Log("Bird Left Ground");
 	}
 
 	private void OnTriggerStay2D()

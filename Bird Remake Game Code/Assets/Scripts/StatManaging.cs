@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StatManaging : MonoBehaviour
+public class StatManaging : MonoBehaviour, IData
 {
     [Header("Score")]
     public int score = 0;
-    public int maxScore;
+    public int highScore;
     public float scoreIncRate;
     public Text scoreText;
+    public Text finalScoreText;
+    public Text highScoreText;
 
     [Header("Screens")]
     public GameObject titleScreen;
     public GameObject scoreScreen;
     public GameObject endScreen;
+    public GameObject deathTextBox;
+    public GameObject newBestTextBox;
     public GameObject pauseButton;
     public GameObject pauseScreen;
-    public Text finalScoreText;
 
     [Header("Audio")]
     public AudioClip startButtonAudio;
@@ -39,6 +42,15 @@ public class StatManaging : MonoBehaviour
     private float timer = 0;
     private Vector3 startPosition;
 
+    public void LoadSave(gameData data)
+    {
+        this.highScore = data.highScore;
+    }
+
+    public void WriteSave(ref gameData data)
+    {
+        data.highScore = this.highScore;
+    }
     void Start()
     {
         gameStart = false;
@@ -46,6 +58,7 @@ public class StatManaging : MonoBehaviour
         scoreScreen.SetActive(false);
         pauseButton.SetActive(false);
         pauseScreen.SetActive(false);
+        highScoreText.text = "High Score: " + highScore.ToString();
         titleScreen.SetActive(true);
         startPosition = character.transform.position;
     }
@@ -96,10 +109,20 @@ public class StatManaging : MonoBehaviour
         gameStart = false;
         startBox.SetActive(true);
         character.transform.position = startPosition;
+        if (score > highScore) 
+        {
+            highScore = score;
+            deathTextBox.SetActive(false);
+            newBestTextBox.SetActive(true);
+        } else {
+            deathTextBox.SetActive(true);
+            newBestTextBox.SetActive(false);
+        }
         AudioSource.PlayClipAtPoint(birdDeathAudio, new Vector3(0f, 0f, 0f), volume);
         scoreScreen.SetActive(false);
         pauseButton.SetActive(false);
         finalScoreText.text = "Score: " + score.ToString();
+        highScoreText.text = "High Score: " + highScore.ToString();
         endScreen.SetActive(true);
     }
 
